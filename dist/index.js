@@ -7,6 +7,8 @@ const express_1 = __importDefault(require("express"));
 const register_routing_files_1 = __importDefault(require("./routes/register-routing-files"));
 const app = (0, express_1.default)();
 const port = 5000;
+app.use(express_1.default.static('image_folder'));
+app.use(express_1.default.static('video_folder'));
 app.use((req, res, next) => {
     // Website you wish to allow to connect
     res.setHeader("Access-Control-Allow-Origin", "*");
