@@ -64,7 +64,7 @@ const fileSaveToServer = (req, res, next) => {
     const imgPath = `in_images/${image.originalname}`;
     if (image.fieldname === "image") {
         const fileContents = new Buffer(image.buffer, "base64");
-        fs.writeFile(`image_folder/${imgPath}`, fileContents, (err) => {
+        fs.writeFile(`uploads/image_folder/${imgPath}`, fileContents, (err) => {
             if (err)
                 return console.error(err);
         });
@@ -81,7 +81,7 @@ const videoSaveToServer = (req, res, next) => {
     const vidPath = `in_video/${video.originalname}`;
     if (video.fieldname === "video") {
         const fileContents = new Buffer(video.buffer, "base64");
-        fs.writeFile(`video_folder/${vidPath}`, fileContents, (err) => {
+        fs.writeFile(`uploads/video_folder/${vidPath}`, fileContents, (err) => {
             if (err)
                 return console.error(err);
         });

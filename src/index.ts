@@ -4,8 +4,8 @@ import registeredRouters from './routes/register-routing-files';
 const app = express();
 const port = 5000;
 
-app.use(express.static('image_folder'));
-app.use(express.static('video_folder'));
+app.use(express.static('uploads/image_folder'));
+app.use(express.static('uploads/video_folder'));
 
 app.use((req, res, next) => {
     // Website you wish to allow to connect
