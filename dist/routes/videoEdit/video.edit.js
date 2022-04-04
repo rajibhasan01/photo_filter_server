@@ -27,10 +27,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const express_1 = __importDefault(require("express"));
 const up = __importStar(require("../../validation/fileUpload"));
-const photoRoute = express_1.default.Router();
-// Post new image upload api
-photoRoute.post("/blur", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, (req, res, nxt) => {
-    res.send("hello i am here");
+const videoRoute = express_1.default.Router();
+// Post new video upload api
+videoRoute.post("/uploadVideo", up.videoUpload.fields([{ name: "video", maxCount: 1 }]), up.videoSaveToServer, (req, res) => {
+    res.send("vidoe upload done");
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
 });
-module.exports = photoRoute;
-//# sourceMappingURL=photo.edit.js.map
+module.exports = videoRoute;
+//# sourceMappingURL=video.edit.js.map

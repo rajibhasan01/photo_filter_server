@@ -4,7 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const express_1 = __importDefault(require("express"));
 const photo_edit_1 = __importDefault(require("./photoEdit/photo.edit"));
+const video_edit_1 = __importDefault(require("./videoEdit/video.edit"));
 const registeredRouters = express_1.default.Router();
 registeredRouters.use("/img/", photo_edit_1.default);
+registeredRouters.use("/vid/", video_edit_1.default);
 module.exports = registeredRouters;
 //# sourceMappingURL=register-routing-files.js.map

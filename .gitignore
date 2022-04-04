@@ -2,3 +2,4 @@ node_modules
 tsconfig.json
 tslint.json
 image_folder
+video_folder
