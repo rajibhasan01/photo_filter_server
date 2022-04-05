@@ -35,7 +35,7 @@ const videoStorage = multer_1.default.memoryStorage();
 exports.imageUpload = (0, multer_1.default)({
     storage: imageStorage,
     limits: {
-        fileSize: 3000000, // 1000000 Bytes = 1 MB
+        fileSize: 10000000, // 1000000 Bytes = 10 MB
     },
     fileFilter(req, file, cb) {
         if (!file.originalname.match(/\.(png|jpg|pdf|jpeg|jpe|jif)$/)) {

@@ -9,7 +9,7 @@ photoRoute.post(
   up.imageUpload.fields([{ name: "image", maxCount: 1 }]),
   up.fileSaveToServer,
   (req, res, nxt) => {
-    res.send("hello i am here");
+    res.send({msg: "hello i am here"});
   }
 );
 

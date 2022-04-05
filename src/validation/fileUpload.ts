@@ -8,7 +8,7 @@ const videoStorage = multer.memoryStorage();
 export const imageUpload = multer({
   storage: imageStorage,
   limits: {
-    fileSize: 3000000, // 1000000 Bytes = 1 MB
+    fileSize: 10000000, // 1000000 Bytes = 10 MB
   },
 
   fileFilter(req, file, cb) {
