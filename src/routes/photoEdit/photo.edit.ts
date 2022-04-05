@@ -5,7 +5,7 @@ const photoRoute = express.Router();
 
 // Post new image upload api
 photoRoute.post(
-  "/blur",
+  "/upload",
   up.imageUpload.fields([{ name: "image", maxCount: 1 }]),
   up.fileSaveToServer,
   (req, res, nxt) => {

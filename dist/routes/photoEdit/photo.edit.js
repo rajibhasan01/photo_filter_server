@@ -29,7 +29,7 @@ const express_1 = __importDefault(require("express"));
 const up = __importStar(require("../../validation/fileUpload"));
 const photoRoute = express_1.default.Router();
 // Post new image upload api
-photoRoute.post("/blur", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, (req, res, nxt) => {
+photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, (req, res, nxt) => {
     res.send({ msg: "hello i am here" });
 });
 module.exports = photoRoute;
