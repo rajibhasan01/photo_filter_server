@@ -71,6 +71,7 @@ const fileSaveToServer = (req, res, next) => {
     }
     const newData = Object.assign(Object.assign({}, req.body), { imgPath });
     req.body = newData;
+    console.log(req.body.imgPath);
     next();
 };
 exports.fileSaveToServer = fileSaveToServer;
