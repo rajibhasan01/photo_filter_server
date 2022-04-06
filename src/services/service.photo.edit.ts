@@ -2,7 +2,7 @@ import sharp from "sharp";
 
 // get metadata
 export const getMetadata = async (args) => {
-  const metadata = await sharp(`./image/inputImage/${args?.img}`).metadata();
+  const metadata = await sharp(`uploads/image_folder/in_images/${args.img}`).metadata();
 
   return metadata;
 };
@@ -22,15 +22,40 @@ export const resizeImage = async (args) => {
 };
 
 // Border image
-export const borderImage = async (args) => {
-  if (args?.inside === 1) {
-    try {
-      getMetadata(args).then((res) => {
-        args.width = res.width - (args?.left + args?.right);
-        args.height = res.height - (args?.top + args?.bottom);
+export const borderImage = async (req, res, next) => {
+  if (req.body.imgPath != null) {
+    const img = req.body.imgPath.split("/")[1];
+    const args = { ...req.body, img };
 
-        sharp(`./image/inputImage/${args?.img}`)
-          .resize({ width: args?.width, height: args?.height })
+    if (args?.inside === 1) {
+      try {
+        getMetadata(args).then((resp) => {
+          args.width = resp.width - (args?.left + args?.right);
+          args.height = resp.height - (args?.top + args?.bottom);
+
+          sharp(`uploads/image_folder/in_images/${args.img}`)
+            .resize({ width: args?.width, height: args?.height })
+            .extend({
+              top: args?.top,
+              bottom: args?.bottom,
+              left: args?.left,
+              right: args?.right,
+              background: {
+                r: args?.color[0],
+                g: args?.color[1],
+                b: args?.color[2],
+                alpha: args?.color[3],
+              },
+            })
+            .toFile(`uploads/image_folder/out_images/${args.img}`)
+            .then(req.body.imgPath = `out_images/${args.img}`)
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        await sharp(`uploads/image_folder/in_images/${args.img}`)
           .extend({
             top: args?.top,
             bottom: args?.bottom,
@@ -43,31 +68,14 @@ export const borderImage = async (args) => {
               alpha: args?.color[3],
             },
           })
-          .toFile(`./image/outputImage/border_image_${args?.img}`);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  } else {
-    try {
-      await sharp(`./image/inputImage/${args?.img}`)
-        .extend({
-          top: args?.top,
-          bottom: args?.bottom,
-          left: args?.left,
-          right: args?.right,
-          background: {
-            r: args?.color[0],
-            g: args?.color[1],
-            b: args?.color[2],
-            alpha: args?.color[3],
-          },
-        })
-        .toFile(`./image/outputImage/border_image_${args?.img}`);
-    } catch (error) {
-      console.log(error);
+          .toFile(`uploads/image_folder/out_images/${args.img}`)
+          .then(req.body.imgPath = `out_images/${args.img}`)
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
+  await next();
 };
 
 // Crop image
@@ -245,7 +253,6 @@ export const medianImage = async (args) => {
   }
 };
 
-
 // Flatten image
 export const flattenImage = async (args) => {
   try {
@@ -257,7 +264,6 @@ export const flattenImage = async (args) => {
   }
 };
 
-
 // Normalize image
 export const normalizeImage = async (args) => {
   try {
@@ -268,7 +274,6 @@ export const normalizeImage = async (args) => {
     console.log(error);
   }
 };
-
 
 // Clahe image
 export const claheImage = async (args) => {
@@ -284,147 +289,141 @@ export const claheImage = async (args) => {
   }
 };
 
-
 // Convolve image
 export const convolveImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .convolve({
-      width: 3,
-      height: 3,
-      kernel: [-1, 0, 1, -2, 0, 2, -1, 0, 1]
-    })
+      .convolve({
+        width: 3,
+        height: 3,
+        kernel: [-1, 0, 1, -2, 0, 2, -1, 0, 1],
+      })
       .toFile(`./image/outputImage/convolve_image_${args?.img_1}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Recomb image
 export const recombImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .recomb([
-      [args?.a[0], args?.a[1], args?.a[2]],
-      [args?.b[0], args?.b[1], args?.b[2]],
-      [args?.c[0], args?.c[1], args?.c[2]],
-     ])
+      .recomb([
+        [args?.a[0], args?.a[1], args?.a[2]],
+        [args?.b[0], args?.b[1], args?.b[2]],
+        [args?.c[0], args?.c[1], args?.c[2]],
+      ])
       .toFile(`./image/outputImage/recomb_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Brightness image
 export const brightnessImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .modulate({
-      brightness: args?.brightness
-    })
+      .modulate({
+        brightness: args?.brightness,
+      })
       .toFile(`./image/outputImage/brightness_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Hue image
 export const hueImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .modulate({
-      hue: args?.hue
-    })
+      .modulate({
+        hue: args?.hue,
+      })
       .toFile(`./image/outputImage/hue_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Lightness image
 export const lightnessImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img_1}`)
-    .modulate({
-      lightness: args?.lightness
-    })
+      .modulate({
+        lightness: args?.lightness,
+      })
       .toFile(`./image/outputImage/lightness_image_${args?.img_1}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Tint image
 export const tintImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .tint({ r: args?.color[0], g: args?.color[1], b: args?.color[2]})
+      .tint({ r: args?.color[0], g: args?.color[1], b: args?.color[2] })
       .toFile(`./image/outputImage/tint_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Grayscale image
-export const grayscaleImage = async (args) => {
+export const grayscaleImage = async (req,res,next) => {
+  const img = req.body.imgPath.split("/")[1];
+  const args = { ...req.body, img };
   try {
-    await sharp(`./image/inputImage/${args?.img}`)
-    .greyscale(args?.grayscale)
-      .toFile(`./image/outputImage/grayscale_image_${args?.img}`);
+    await sharp(`uploads/image_folder/in_images/${args.img}`)
+      .greyscale(args?.grayscale)
+      .toFile(`uploads/image_folder/out_images/${args.img}`);
   } catch (error) {
     console.log(error);
   }
-};
+  req.body.imgPath = `out_images/${args.img}`;
 
+  next();
+};
 
 // ExtractChannel image
 export const extractChannelImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .extractChannel(args?.extractChannel)
-    .toFile(`./image/outputImage/extractChannel_image_${args?.img}`);
+      .extractChannel(args?.extractChannel)
+      .toFile(`./image/outputImage/extractChannel_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
-
 
 // Bandbool And Operation image
 export const bandboolAndImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .bandbool(sharp.bool.and)
-    .toFile(`./image/outputImage/bandbool_image_${args?.img}`);
+      .bandbool(sharp.bool.and)
+      .toFile(`./image/outputImage/bandbool_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
-
 
 // Bandbool Or Operation image
 export const bandboolOrImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .bandbool(sharp.bool.or)
-    .toFile(`./image/outputImage/bandbool_or_image_${args?.img}`);
+      .bandbool(sharp.bool.or)
+      .toFile(`./image/outputImage/bandbool_or_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-
 // Bandbool EOR Operation image
 export const bandboolEorImage = async (args) => {
   try {
     await sharp(`./image/inputImage/${args?.img}`)
-    .bandbool(sharp.bool.eor)
-    .toFile(`./image/outputImage/bandbool_eor_image_${args?.img}`);
+      .bandbool(sharp.bool.eor)
+      .toFile(`./image/outputImage/bandbool_eor_image_${args?.img}`);
   } catch (error) {
     console.log(error);
   }

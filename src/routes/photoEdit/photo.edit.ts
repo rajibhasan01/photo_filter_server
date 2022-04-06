@@ -1,6 +1,7 @@
 import express from "express";
 import sharp from "sharp";
 import * as up from "../../validation/fileUpload";
+import * as edit from "../../services/service.photo.edit";
 
 const photoRoute = express.Router();
 
@@ -10,10 +11,17 @@ photoRoute.post(
   up.imageUpload.fields([{ name: "image", maxCount: 1 }]),
   up.fileSaveToServer,
   (req, res, nxt) => {
-    res.send({imgPath:req.body.imgPath});
+    res.send({ imgPath: req.body.imgPath });
   }
 );
 
+photoRoute.post("/border", edit.borderImage, (req, res) => {
+  res.send({ imgPath: req.body.imgPath });
+});
+
+photoRoute.post("/gray", edit.grayscaleImage, (req, res) => {
+  res.send({ imgPath: req.body.imgPath });
+});
 
 // // Resize
 // photoRoute.post('/resize', async (req, res) => {
@@ -39,6 +47,5 @@ photoRoute.post(
 // 			.catch((err) => console.log(err));
 // 	});
 // });
-
 
 export = photoRoute;

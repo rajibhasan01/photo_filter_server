@@ -27,9 +27,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const express_1 = __importDefault(require("express"));
 const up = __importStar(require("../../validation/fileUpload"));
+const edit = __importStar(require("../../services/service.photo.edit"));
 const photoRoute = express_1.default.Router();
 // Post new image upload api
 photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, (req, res, nxt) => {
+    res.send({ imgPath: req.body.imgPath });
+});
+photoRoute.post("/border", edit.borderImage, (req, res) => {
+    res.send({ imgPath: req.body.imgPath });
+});
+photoRoute.post("/gray", edit.grayscaleImage, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
 });
 module.exports = photoRoute;

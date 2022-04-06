@@ -16,7 +16,7 @@ exports.bandboolEorImage = exports.bandboolOrImage = exports.bandboolAndImage = 
 const sharp_1 = __importDefault(require("sharp"));
 // get metadata
 const getMetadata = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    const metadata = yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`).metadata();
+    const metadata = yield (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`).metadata();
     return metadata;
 });
 exports.getMetadata = getMetadata;
@@ -36,14 +36,40 @@ const resizeImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.resizeImage = resizeImage;
 // Border image
-const borderImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    if ((args === null || args === void 0 ? void 0 : args.inside) === 1) {
-        try {
-            (0, exports.getMetadata)(args).then((res) => {
-                args.width = res.width - ((args === null || args === void 0 ? void 0 : args.left) + (args === null || args === void 0 ? void 0 : args.right));
-                args.height = res.height - ((args === null || args === void 0 ? void 0 : args.top) + (args === null || args === void 0 ? void 0 : args.bottom));
-                (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
-                    .resize({ width: args === null || args === void 0 ? void 0 : args.width, height: args === null || args === void 0 ? void 0 : args.height })
+const borderImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.body.imgPath != null) {
+        const img = req.body.imgPath.split("/")[1];
+        const args = Object.assign(Object.assign({}, req.body), { img });
+        if ((args === null || args === void 0 ? void 0 : args.inside) === 1) {
+            try {
+                (0, exports.getMetadata)(args).then((resp) => {
+                    args.width = resp.width - ((args === null || args === void 0 ? void 0 : args.left) + (args === null || args === void 0 ? void 0 : args.right));
+                    args.height = resp.height - ((args === null || args === void 0 ? void 0 : args.top) + (args === null || args === void 0 ? void 0 : args.bottom));
+                    (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`)
+                        .resize({ width: args === null || args === void 0 ? void 0 : args.width, height: args === null || args === void 0 ? void 0 : args.height })
+                        .extend({
+                        top: args === null || args === void 0 ? void 0 : args.top,
+                        bottom: args === null || args === void 0 ? void 0 : args.bottom,
+                        left: args === null || args === void 0 ? void 0 : args.left,
+                        right: args === null || args === void 0 ? void 0 : args.right,
+                        background: {
+                            r: args === null || args === void 0 ? void 0 : args.color[0],
+                            g: args === null || args === void 0 ? void 0 : args.color[1],
+                            b: args === null || args === void 0 ? void 0 : args.color[2],
+                            alpha: args === null || args === void 0 ? void 0 : args.color[3],
+                        },
+                    })
+                        .toFile(`uploads/image_folder/out_images/${args.img}`)
+                        .then(req.body.imgPath = `out_images/${args.img}`);
+                });
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        else {
+            try {
+                yield (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`)
                     .extend({
                     top: args === null || args === void 0 ? void 0 : args.top,
                     bottom: args === null || args === void 0 ? void 0 : args.bottom,
@@ -56,34 +82,15 @@ const borderImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
                         alpha: args === null || args === void 0 ? void 0 : args.color[3],
                     },
                 })
-                    .toFile(`./image/outputImage/border_image_${args === null || args === void 0 ? void 0 : args.img}`);
-            });
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }
-    else {
-        try {
-            yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
-                .extend({
-                top: args === null || args === void 0 ? void 0 : args.top,
-                bottom: args === null || args === void 0 ? void 0 : args.bottom,
-                left: args === null || args === void 0 ? void 0 : args.left,
-                right: args === null || args === void 0 ? void 0 : args.right,
-                background: {
-                    r: args === null || args === void 0 ? void 0 : args.color[0],
-                    g: args === null || args === void 0 ? void 0 : args.color[1],
-                    b: args === null || args === void 0 ? void 0 : args.color[2],
-                    alpha: args === null || args === void 0 ? void 0 : args.color[3],
-                },
-            })
-                .toFile(`./image/outputImage/border_image_${args === null || args === void 0 ? void 0 : args.img}`);
-        }
-        catch (error) {
-            console.log(error);
+                    .toFile(`uploads/image_folder/out_images/${args.img}`)
+                    .then(req.body.imgPath = `out_images/${args.img}`);
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
     }
+    yield next();
 });
 exports.borderImage = borderImage;
 // Crop image
@@ -313,7 +320,7 @@ const convolveImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
             .convolve({
             width: 3,
             height: 3,
-            kernel: [-1, 0, 1, -2, 0, 2, -1, 0, 1]
+            kernel: [-1, 0, 1, -2, 0, 2, -1, 0, 1],
         })
             .toFile(`./image/outputImage/convolve_image_${args === null || args === void 0 ? void 0 : args.img_1}`);
     }
@@ -343,7 +350,7 @@ const brightnessImage = (args) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
             .modulate({
-            brightness: args === null || args === void 0 ? void 0 : args.brightness
+            brightness: args === null || args === void 0 ? void 0 : args.brightness,
         })
             .toFile(`./image/outputImage/brightness_image_${args === null || args === void 0 ? void 0 : args.img}`);
     }
@@ -357,7 +364,7 @@ const hueImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
             .modulate({
-            hue: args === null || args === void 0 ? void 0 : args.hue
+            hue: args === null || args === void 0 ? void 0 : args.hue,
         })
             .toFile(`./image/outputImage/hue_image_${args === null || args === void 0 ? void 0 : args.img}`);
     }
@@ -371,7 +378,7 @@ const lightnessImage = (args) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img_1}`)
             .modulate({
-            lightness: args === null || args === void 0 ? void 0 : args.lightness
+            lightness: args === null || args === void 0 ? void 0 : args.lightness,
         })
             .toFile(`./image/outputImage/lightness_image_${args === null || args === void 0 ? void 0 : args.img_1}`);
     }
@@ -393,15 +400,19 @@ const tintImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.tintImage = tintImage;
 // Grayscale image
-const grayscaleImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
+const grayscaleImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const img = req.body.imgPath.split("/")[1];
+    const args = Object.assign(Object.assign({}, req.body), { img });
     try {
-        yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
+        yield (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`)
             .greyscale(args === null || args === void 0 ? void 0 : args.grayscale)
-            .toFile(`./image/outputImage/grayscale_image_${args === null || args === void 0 ? void 0 : args.img}`);
+            .toFile(`uploads/image_folder/out_images/${args.img}`);
     }
     catch (error) {
         console.log(error);
     }
+    req.body.imgPath = `out_images/${args.img}`;
+    next();
 });
 exports.grayscaleImage = grayscaleImage;
 // ExtractChannel image

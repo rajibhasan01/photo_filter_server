@@ -1,11 +1,16 @@
 import express from 'express';
 import registeredRouters from './routes/register-routing-files';
+import bodyParser from "body-parser";
+import cors from "cors";
 
 const app = express();
 const port = 5000;
 
 app.use(express.static('uploads/image_folder'));
 app.use(express.static('uploads/video_folder'));
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(cors());
 
 app.use((req, res, next) => {
     // Website you wish to allow to connect
