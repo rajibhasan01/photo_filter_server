@@ -388,15 +388,21 @@ const lightnessImage = (args) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.lightnessImage = lightnessImage;
 // Tint image
-const tintImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
-            .tint({ r: args === null || args === void 0 ? void 0 : args.color[0], g: args === null || args === void 0 ? void 0 : args.color[1], b: args === null || args === void 0 ? void 0 : args.color[2] })
-            .toFile(`./image/outputImage/tint_image_${args === null || args === void 0 ? void 0 : args.img}`);
+const tintImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.body.imgPath != null) {
+        const img = req.body.imgPath.split("/")[1];
+        const args = Object.assign(Object.assign({}, req.body), { img });
+        try {
+            yield (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`)
+                .tint({ r: args === null || args === void 0 ? void 0 : args.color[0], g: args === null || args === void 0 ? void 0 : args.color[1], b: args === null || args === void 0 ? void 0 : args.color[2] })
+                .toFile(`uploads/image_folder/out_images/${args.img}`);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        req.body.imgPath = `out_images/${args.img}`;
     }
-    catch (error) {
-        console.log(error);
-    }
+    next();
 });
 exports.tintImage = tintImage;
 // Grayscale image

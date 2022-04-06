@@ -359,14 +359,23 @@ export const lightnessImage = async (args) => {
 };
 
 // Tint image
-export const tintImage = async (args) => {
-  try {
-    await sharp(`./image/inputImage/${args?.img}`)
-      .tint({ r: args?.color[0], g: args?.color[1], b: args?.color[2] })
-      .toFile(`./image/outputImage/tint_image_${args?.img}`);
-  } catch (error) {
-    console.log(error);
+export const tintImage = async (req,res,next) => {
+
+  if (req.body.imgPath != null) {
+      const img = req.body.imgPath.split("/")[1];
+      const args = { ...req.body, img };
+      try {
+      await sharp(`uploads/image_folder/in_images/${args.img}`)
+        .tint({ r: args?.color[0], g: args?.color[1], b: args?.color[2] })
+        .toFile(`uploads/image_folder/out_images/${args.img}`);
+      } catch (error) {
+      console.log(error);
+    }
+    req.body.imgPath = `out_images/${args.img}`;
   }
+
+  next();
+
 };
 
 // Grayscale image

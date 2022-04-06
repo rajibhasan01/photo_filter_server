@@ -23,6 +23,10 @@ photoRoute.post("/gray", edit.grayscaleImage, (req, res) => {
   res.send({ imgPath: req.body.imgPath });
 });
 
+photoRoute.post("/tint", edit.tintImage, (req, res) => {
+  res.send({ imgPath: req.body.imgPath });
+});
+
 // // Resize
 // photoRoute.post('/resize', async (req, res) => {
 // 	const form = formidable();

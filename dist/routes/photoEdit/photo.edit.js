@@ -39,5 +39,8 @@ photoRoute.post("/border", edit.borderImage, (req, res) => {
 photoRoute.post("/gray", edit.grayscaleImage, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
 });
+photoRoute.post("/tint", edit.tintImage, (req, res) => {
+    res.send({ imgPath: req.body.imgPath });
+});
 module.exports = photoRoute;
 //# sourceMappingURL=photo.edit.js.map
