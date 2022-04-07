@@ -32,7 +32,8 @@ const sample = __importStar(require("../../validation/sample.generate"));
 const photoRoute = express_1.default.Router();
 // Upload Image API
 photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, sample.sampleFileGeneration, (req, res, nxt) => {
-    res.send({ imgPath: req.body.imgPath });
+    const path = { imgPath: req.body.imgPath, filter_1: 'sample_images/sample_1.png', filter_2: 'sample_images/sample_2.png', filter_3: 'sample_images/sample_3.png', filter_4: 'sample_images/sample_4.png' };
+    res.send(path);
 });
 // Border Creating API
 photoRoute.post("/border", edit.borderImage, (req, res) => {

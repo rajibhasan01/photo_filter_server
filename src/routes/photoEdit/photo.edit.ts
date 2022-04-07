@@ -13,7 +13,8 @@ photoRoute.post(
   up.fileSaveToServer,
   sample.sampleFileGeneration,
   (req, res, nxt) => {
-    res.send({ imgPath: req.body.imgPath });
+    const path = { imgPath: req.body.imgPath, filter_1: 'sample_images/sample_1.png', filter_2: 'sample_images/sample_2.png', filter_3: 'sample_images/sample_3.png', filter_4: 'sample_images/sample_4.png'};
+    res.send(path);
   }
 );
 
