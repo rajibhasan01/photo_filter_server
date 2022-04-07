@@ -330,19 +330,23 @@ const convolveImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.convolveImage = convolveImage;
 // Recomb image
-const recombImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
+const recombImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const args = req.body.args;
+    console.log('args new', args);
     try {
-        yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
+        yield (0, sharp_1.default)(args.img.buffer)
             .recomb([
             [args === null || args === void 0 ? void 0 : args.a[0], args === null || args === void 0 ? void 0 : args.a[1], args === null || args === void 0 ? void 0 : args.a[2]],
             [args === null || args === void 0 ? void 0 : args.b[0], args === null || args === void 0 ? void 0 : args.b[1], args === null || args === void 0 ? void 0 : args.b[2]],
             [args === null || args === void 0 ? void 0 : args.c[0], args === null || args === void 0 ? void 0 : args.c[1], args === null || args === void 0 ? void 0 : args.c[2]],
         ])
-            .toFile(`./image/outputImage/recomb_image_${args === null || args === void 0 ? void 0 : args.img}`);
+            .png()
+            .toFile(`uploads/image_folder/sample_images/sample_${args.number}.png`);
     }
     catch (error) {
         console.log(error);
     }
+    next();
 });
 exports.recombImage = recombImage;
 // Brightness image

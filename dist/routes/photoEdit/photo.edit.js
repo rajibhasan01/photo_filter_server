@@ -28,17 +28,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const express_1 = __importDefault(require("express"));
 const up = __importStar(require("../../validation/fileUpload"));
 const edit = __importStar(require("../../services/service.photo.edit"));
+const sample = __importStar(require("../../validation/sample.generate"));
 const photoRoute = express_1.default.Router();
-// Post new image upload api
-photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, (req, res, nxt) => {
+// Upload Image API
+photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, sample.sampleFileGeneration, (req, res, nxt) => {
     res.send({ imgPath: req.body.imgPath });
 });
+// Border Creating API
 photoRoute.post("/border", edit.borderImage, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
 });
+// Gray Scale Convert API
 photoRoute.post("/gray", edit.grayscaleImage, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
 });
+// Tint Image API
 photoRoute.post("/tint", edit.tintImage, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
 });

@@ -305,18 +305,22 @@ export const convolveImage = async (args) => {
 };
 
 // Recomb image
-export const recombImage = async (args) => {
+export const recombImage = async (req, res, next) => {
+  const args = req.body.args;
+  console.log('args new', args);
   try {
-    await sharp(`./image/inputImage/${args?.img}`)
+    await sharp(args.img.buffer)
       .recomb([
         [args?.a[0], args?.a[1], args?.a[2]],
         [args?.b[0], args?.b[1], args?.b[2]],
         [args?.c[0], args?.c[1], args?.c[2]],
       ])
-      .toFile(`./image/outputImage/recomb_image_${args?.img}`);
+      .png()
+      .toFile(`uploads/image_folder/sample_images/sample_${args.number}.png`);
   } catch (error) {
     console.log(error);
   }
+  next()
 };
 
 // Brightness image
