@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bandboolEorImage = exports.bandboolOrImage = exports.bandboolAndImage = exports.extractChannelImage = exports.grayscaleImage = exports.tintImage = exports.lightnessImage = exports.hueImage = exports.brightnessImage = exports.recombImage = exports.convolveImage = exports.claheImage = exports.normalizeImage = exports.flattenImage = exports.medianImage = exports.sharpenImage = exports.affineImage = exports.flopImage = exports.flipImage = exports.overlayImage = exports.addTextOnImage = exports.blurImage = exports.rotateImage = exports.cropImage = exports.borderImage = exports.resizeImage = exports.getMetadata = void 0;
+exports.bandboolEorImage = exports.bandboolOrImage = exports.bandboolAndImage = exports.extractChannelImage = exports.grayscaleImage = exports.tintImage = exports.lightnessImage = exports.hueImage = exports.brightnessImage = exports.customizeFilter = exports.recombImage = exports.convolveImage = exports.claheImage = exports.normalizeImage = exports.flattenImage = exports.medianImage = exports.sharpenImage = exports.affineImage = exports.flopImage = exports.flipImage = exports.overlayImage = exports.addTextOnImage = exports.blurImage = exports.rotateImage = exports.cropImage = exports.borderImage = exports.resizeImage = exports.getMetadata = void 0;
 const sharp_1 = __importDefault(require("sharp"));
 // get metadata
 const getMetadata = (args) => __awaiter(void 0, void 0, void 0, function* () {
@@ -60,7 +60,7 @@ const borderImage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                         },
                     })
                         .toFile(`uploads/image_folder/out_images/${args.img}`)
-                        .then(req.body.imgPath = `out_images/${args.img}`);
+                        .then((req.body.imgPath = `out_images/${args.img}`));
                 });
             }
             catch (error) {
@@ -83,7 +83,7 @@ const borderImage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                     },
                 })
                     .toFile(`uploads/image_folder/out_images/${args.img}`)
-                    .then(req.body.imgPath = `out_images/${args.img}`);
+                    .then((req.body.imgPath = `out_images/${args.img}`));
             }
             catch (error) {
                 console.log(error);
@@ -244,22 +244,28 @@ const affineImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.affineImage = affineImage;
 // Sharpen image
-const sharpenImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield (0, sharp_1.default)(`./image/inputImage/${args === null || args === void 0 ? void 0 : args.img}`)
-            .sharpen({
-            sigma: args === null || args === void 0 ? void 0 : args.sigma,
-            m1: args === null || args === void 0 ? void 0 : args.sharpen_m1,
-            m2: args === null || args === void 0 ? void 0 : args.sharpen_m2,
-            x1: args === null || args === void 0 ? void 0 : args.sharpen_x1,
-            y2: args === null || args === void 0 ? void 0 : args.sharpen_y2,
-            y3: args === null || args === void 0 ? void 0 : args.sharpen_y3,
-        })
-            .toFile(`./image/outputImage/sharpen_image${args === null || args === void 0 ? void 0 : args.img}`);
+const sharpenImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.body.imgPath != null) {
+        const img = req.body.imgPath.split("/")[1];
+        const args = Object.assign(Object.assign({}, req.body), { img });
+        try {
+            yield (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`)
+                .sharpen({
+                sigma: args === null || args === void 0 ? void 0 : args.sigma,
+                m1: args === null || args === void 0 ? void 0 : args.sharpen_m1,
+                m2: args === null || args === void 0 ? void 0 : args.sharpen_m2,
+                x1: args === null || args === void 0 ? void 0 : args.sharpen_x1,
+                y2: args === null || args === void 0 ? void 0 : args.sharpen_y2,
+                y3: args === null || args === void 0 ? void 0 : args.sharpen_y3,
+            })
+                .toFile(`uploads/image_folder/out_images/${args.img}`);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        req.body.imgPath = `out_images/${args.img}`;
     }
-    catch (error) {
-        console.log(error);
-    }
+    next();
 });
 exports.sharpenImage = sharpenImage;
 // Median image
@@ -332,7 +338,7 @@ exports.convolveImage = convolveImage;
 // Recomb image
 const recombImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const args = req.body.args;
-    console.log('args new', args);
+    console.log("args new", args);
     try {
         yield (0, sharp_1.default)(args.img.buffer)
             .recomb([
@@ -349,6 +355,28 @@ const recombImage = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     next();
 });
 exports.recombImage = recombImage;
+// Customize Filter
+const customizeFilter = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.body.imgPath != null) {
+        const img = req.body.imgPath.split("/")[1];
+        const args = Object.assign(Object.assign({}, req.body), { img });
+        try {
+            yield (0, sharp_1.default)(`uploads/image_folder/in_images/${args.img}`)
+                .recomb([
+                [args === null || args === void 0 ? void 0 : args.a[0], args === null || args === void 0 ? void 0 : args.a[1], args === null || args === void 0 ? void 0 : args.a[2]],
+                [args === null || args === void 0 ? void 0 : args.b[0], args === null || args === void 0 ? void 0 : args.b[1], args === null || args === void 0 ? void 0 : args.b[2]],
+                [args === null || args === void 0 ? void 0 : args.c[0], args === null || args === void 0 ? void 0 : args.c[1], args === null || args === void 0 ? void 0 : args.c[2]],
+            ])
+                .toFile(`uploads/image_folder/out_images/${args.img}`);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        req.body.imgPath = `out_images/${args.img}`;
+    }
+    next();
+});
+exports.customizeFilter = customizeFilter;
 // Brightness image
 const brightnessImage = (args) => __awaiter(void 0, void 0, void 0, function* () {
     try {

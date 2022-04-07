@@ -47,5 +47,13 @@ photoRoute.post("/gray", edit.grayscaleImage, (req, res) => {
 photoRoute.post("/tint", edit.tintImage, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
 });
+// Sharpen Image API
+photoRoute.post("/sharpen", edit.sharpenImage, (req, res) => {
+    res.send({ imgPath: req.body.imgPath });
+});
+// Custom Filter Image API
+photoRoute.post("/custom_filter", edit.customizeFilter, (req, res) => {
+    res.send({ imgPath: req.body.imgPath });
+});
 module.exports = photoRoute;
 //# sourceMappingURL=photo.edit.js.map

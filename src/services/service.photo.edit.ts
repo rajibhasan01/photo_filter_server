@@ -2,7 +2,9 @@ import sharp from "sharp";
 
 // get metadata
 export const getMetadata = async (args) => {
-  const metadata = await sharp(`uploads/image_folder/in_images/${args.img}`).metadata();
+  const metadata = await sharp(
+    `uploads/image_folder/in_images/${args.img}`
+  ).metadata();
 
   return metadata;
 };
@@ -48,7 +50,7 @@ export const borderImage = async (req, res, next) => {
               },
             })
             .toFile(`uploads/image_folder/out_images/${args.img}`)
-            .then(req.body.imgPath = `out_images/${args.img}`)
+            .then((req.body.imgPath = `out_images/${args.img}`));
         });
       } catch (error) {
         console.log(error);
@@ -69,7 +71,7 @@ export const borderImage = async (req, res, next) => {
             },
           })
           .toFile(`uploads/image_folder/out_images/${args.img}`)
-          .then(req.body.imgPath = `out_images/${args.img}`)
+          .then((req.body.imgPath = `out_images/${args.img}`));
       } catch (error) {
         console.log(error);
       }
@@ -225,21 +227,29 @@ export const affineImage = async (args) => {
 };
 
 // Sharpen image
-export const sharpenImage = async (args) => {
-  try {
-    await sharp(`./image/inputImage/${args?.img}`)
-      .sharpen({
-        sigma: args?.sigma,
-        m1: args?.sharpen_m1,
-        m2: args?.sharpen_m2,
-        x1: args?.sharpen_x1,
-        y2: args?.sharpen_y2,
-        y3: args?.sharpen_y3,
-      })
-      .toFile(`./image/outputImage/sharpen_image${args?.img}`);
-  } catch (error) {
-    console.log(error);
+export const sharpenImage = async (req, res, next) => {
+  if (req.body.imgPath != null) {
+    const img = req.body.imgPath.split("/")[1];
+    const args = { ...req.body, img };
+
+    try {
+      await sharp(`uploads/image_folder/in_images/${args.img}`)
+        .sharpen({
+          sigma: args?.sigma,
+          m1: args?.sharpen_m1,
+          m2: args?.sharpen_m2,
+          x1: args?.sharpen_x1,
+          y2: args?.sharpen_y2,
+          y3: args?.sharpen_y3,
+        })
+        .toFile(`uploads/image_folder/out_images/${args.img}`);
+    } catch (error) {
+      console.log(error);
+    }
+
+    req.body.imgPath = `out_images/${args.img}`;
   }
+  next();
 };
 
 // Median image
@@ -307,7 +317,7 @@ export const convolveImage = async (args) => {
 // Recomb image
 export const recombImage = async (req, res, next) => {
   const args = req.body.args;
-  console.log('args new', args);
+  console.log("args new", args);
   try {
     await sharp(args.img.buffer)
       .recomb([
@@ -320,7 +330,28 @@ export const recombImage = async (req, res, next) => {
   } catch (error) {
     console.log(error);
   }
-  next()
+  next();
+};
+
+// Customize Filter
+export const customizeFilter = async (req, res, next) => {
+  if (req.body.imgPath != null) {
+    const img = req.body.imgPath.split("/")[1];
+    const args = { ...req.body, img };
+    try {
+      await sharp(`uploads/image_folder/in_images/${args.img}`)
+        .recomb([
+          [args?.a[0], args?.a[1], args?.a[2]],
+          [args?.b[0], args?.b[1], args?.b[2]],
+          [args?.c[0], args?.c[1], args?.c[2]],
+        ])
+        .toFile(`uploads/image_folder/out_images/${args.img}`);
+    } catch (error) {
+      console.log(error);
+    }
+    req.body.imgPath = `out_images/${args.img}`;
+  }
+  next();
 };
 
 // Brightness image
@@ -363,27 +394,25 @@ export const lightnessImage = async (args) => {
 };
 
 // Tint image
-export const tintImage = async (req,res,next) => {
-
+export const tintImage = async (req, res, next) => {
   if (req.body.imgPath != null) {
-      const img = req.body.imgPath.split("/")[1];
-      const args = { ...req.body, img };
-      try {
+    const img = req.body.imgPath.split("/")[1];
+    const args = { ...req.body, img };
+    try {
       await sharp(`uploads/image_folder/in_images/${args.img}`)
         .tint({ r: args?.color[0], g: args?.color[1], b: args?.color[2] })
         .toFile(`uploads/image_folder/out_images/${args.img}`);
-      } catch (error) {
+    } catch (error) {
       console.log(error);
     }
     req.body.imgPath = `out_images/${args.img}`;
   }
 
   next();
-
 };
 
 // Grayscale image
-export const grayscaleImage = async (req,res,next) => {
+export const grayscaleImage = async (req, res, next) => {
   const img = req.body.imgPath.split("/")[1];
   const args = { ...req.body, img };
   try {
