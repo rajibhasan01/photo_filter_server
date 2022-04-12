@@ -3,6 +3,8 @@ import sharp from "sharp";
 import * as up from "../../validation/fileUpload";
 import * as edit from "../../services/service.photo.edit";
 import * as sample from "../../validation/sample.generate"
+import { execSync } from 'child_process';
+
 
 const photoRoute = express.Router();
 
@@ -20,6 +22,7 @@ photoRoute.post(
 
 // Border Creating API
 photoRoute.post("/border", edit.borderImage, (req, res) => {
+  console.log("border value", req.body);
   res.send({ imgPath: req.body.imgPath });
 });
 
@@ -41,6 +44,14 @@ photoRoute.post("/sharpen", edit.sharpenImage, (req, res) => {
 // Custom Filter Image API
 photoRoute.post("/custom_filter", edit.customizeFilter, (req, res) => {
   res.send({ imgPath: req.body.imgPath });
+});
+
+// Background Remove Image API
+photoRoute.post("/remove_bg", (req, res) => {
+
+  const img = req.body.imgPath.split('/')[1];
+  execSync(`rembg i uploads/image_folder/in_images/${img} uploads/image_folder/remove_bg/${img}`, { encoding: 'utf-8' });
+  res.send({imgPath:`remove_bg/${img}`});
 });
 
 export = photoRoute;

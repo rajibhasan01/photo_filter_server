@@ -29,6 +29,7 @@ const express_1 = __importDefault(require("express"));
 const up = __importStar(require("../../validation/fileUpload"));
 const edit = __importStar(require("../../services/service.photo.edit"));
 const sample = __importStar(require("../../validation/sample.generate"));
+const child_process_1 = require("child_process");
 const photoRoute = express_1.default.Router();
 // Upload Image API
 photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }]), up.fileSaveToServer, sample.sampleFileGeneration, (req, res, nxt) => {
@@ -37,6 +38,7 @@ photoRoute.post("/upload", up.imageUpload.fields([{ name: "image", maxCount: 1 }
 });
 // Border Creating API
 photoRoute.post("/border", edit.borderImage, (req, res) => {
+    console.log("border value", req.body);
     res.send({ imgPath: req.body.imgPath });
 });
 // Gray Scale Convert API
@@ -54,6 +56,12 @@ photoRoute.post("/sharpen", edit.sharpenImage, (req, res) => {
 // Custom Filter Image API
 photoRoute.post("/custom_filter", edit.customizeFilter, (req, res) => {
     res.send({ imgPath: req.body.imgPath });
+});
+// Background Remove Image API
+photoRoute.post("/remove_bg", (req, res) => {
+    const img = req.body.imgPath.split('/')[1];
+    (0, child_process_1.execSync)(`rembg i uploads/image_folder/in_images/${img} uploads/image_folder/remove_bg/${img}`, { encoding: 'utf-8' });
+    res.send({ imgPath: `remove_bg/${img}` });
 });
 module.exports = photoRoute;
 //# sourceMappingURL=photo.edit.js.map

@@ -2,6 +2,7 @@ import express from 'express';
 import registeredRouters from './routes/register-routing-files';
 import bodyParser from "body-parser";
 import cors from "cors";
+import path from 'path';
 
 const app = express();
 const port = 5000;
