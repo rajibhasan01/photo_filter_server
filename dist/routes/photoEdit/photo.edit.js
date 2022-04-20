@@ -71,5 +71,14 @@ photoRoute.post("/stroke", (req, res) => {
     (0, child_process_1.execSync)(`python python/stroke.py ${img} ${stroke}`, { encoding: 'utf-8' });
     res.send({ imgPath: `out_images/${img}` });
 });
+// Sketch Image API
+photoRoute.post("/sketch", (req, res) => {
+    console.log("Clicking sketch");
+    const img = req.body.imgPath.split('/')[1];
+    const sketch = req.body.sketch;
+    const sigma = req.body.sigma;
+    (0, child_process_1.execSync)(`python python/sketch.py ${img} ${sketch} ${sigma}`, { encoding: 'utf-8' });
+    res.send({ imgPath: `out_images/${img}` });
+});
 module.exports = photoRoute;
 //# sourceMappingURL=photo.edit.js.map
