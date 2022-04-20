@@ -54,4 +54,15 @@ photoRoute.post("/remove_bg", (req, res) => {
   res.send({imgPath:`remove_bg/${img}`});
 });
 
+
+// Background Remove Image API
+photoRoute.post("/stroke", (req, res) => {
+  console.log("Clicking");
+
+  const img = req.body.imgPath.split('/')[1];
+  const stroke = req.body.stroke;
+  execSync(`python python/stroke.py ${img} ${stroke}`, { encoding: 'utf-8' });
+  res.send({imgPath:`out_images/${img}`});
+});
+
 export = photoRoute;
